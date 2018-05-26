@@ -25,11 +25,7 @@ public class HelloTVXlet implements Xlet, HActionListener {
     }
 
     public void initXlet(XletContext context) {
-      readyGame(context);
-      
-    }
-    public void readyGame (XletContext context) {
-        if(debug) System . out . println ("Xlet Initialiseren");
+      if(debug) System . out . println ("Xlet Initialiseren");
         this.actueleXletContext = context;
       
         //scene----------Template aanmaken-----------------------------------
@@ -147,9 +143,29 @@ public class HelloTVXlet implements Xlet, HActionListener {
         
         scene.validate();
         scene.setVisible(true);
+        
+        paintScreen();
+        
+        for(int i=0; i<7; i++) {
+                for(int j=0; j<4; j++) {  
+                  blocks[i][j] = new HStaticText("");
+                  
+                    //eigenschappen van object---------
+                  blocks[i][j].setLocation(10 + i*100,150 + j*100);
+                  blocks[i][j].setSize(100,100);
+                  blocks[i][j].setBackground(new DVBColor(0,0,0,0));
+                  blocks[i][j].setBackgroundMode(HVisible.BACKGROUND_FILL);
+                  scene.add(blocks[i][j]);
+                }
+            }
     }
     public void actionPerformed (ActionEvent e) {
-        
+        if (turn%2 == 1) {
+            System.out.println("blauw is aan beurt");
+        }
+        else {
+            System.out.println("rood is aan beurt");
+        }
         if (e.getActionCommand() == "rij 1 gekozen") {
             for (int i = 3; i > -1; i--) {
                 if (coins[0][i] == 0) {
@@ -159,7 +175,6 @@ public class HelloTVXlet implements Xlet, HActionListener {
                     else {
                         coins[0][i] = 2;
                     }
-                    System.out.println(coins[0][i]);
                     turn++;
                     break;
                 }
@@ -174,7 +189,6 @@ public class HelloTVXlet implements Xlet, HActionListener {
                     else {
                         coins[1][i] = 2;
                     }
-                    System.out.println(coins[0][i]);
                     turn++;
                     break;
                 }
@@ -189,7 +203,6 @@ public class HelloTVXlet implements Xlet, HActionListener {
                     else {
                         coins[2][i] = 2;
                     }
-                    System.out.println(coins[0][i]);
                     turn++;
                     break;
                 }
@@ -204,7 +217,6 @@ public class HelloTVXlet implements Xlet, HActionListener {
                     else {
                         coins[3][i] = 2;
                     }
-                    System.out.println(coins[0][i]);
                     turn++;
                     break;
                 }
@@ -219,7 +231,6 @@ public class HelloTVXlet implements Xlet, HActionListener {
                     else {
                         coins[4][i] = 2;
                     }
-                    System.out.println(coins[0][i]);
                     turn++;
                     break;
                 }
@@ -234,7 +245,6 @@ public class HelloTVXlet implements Xlet, HActionListener {
                     else {
                         coins[5][i] = 2;
                     }
-                    System.out.println(coins[0][i]);
                     turn++;
                     break;
                 }
@@ -249,7 +259,6 @@ public class HelloTVXlet implements Xlet, HActionListener {
                     else {
                         coins[6][i] = 2;
                     }
-                    System.out.println(coins[0][i]);
                     turn++;
                     break;
                 }
@@ -257,33 +266,24 @@ public class HelloTVXlet implements Xlet, HActionListener {
         }
         else if (e.getActionCommand() == "new game") {
             for(int i=0; i<7; i++) {
-                for(int j=0; j<4; j++) {  
-                     scene.removeAll();
+                for(int j=0; j<4; j++) {
+                    coins[i][j] = 0;
+                    blocks[i][j].setBackground(new DVBColor(0,0,0,0));
+                    turn = 0;
                 }
             }
         }
-        
+        paintScreen();
+    }
+    public void paintScreen () {
         for(int i=0; i<7; i++) {
           for(int j=0; j<4; j++) {
               if (coins[i][j] == 1) {
-                  blocks[i][j] = new HStaticText("");
-                  
-                    //eigenschappen van object---------
-                  blocks[i][j].setLocation(10 + i*100,150 + j*100);
-                  blocks[i][j].setSize(100,100);
                   blocks[i][j].setBackground(new DVBColor(0,127,255,255));
-                  blocks[i][j].setBackgroundMode(HVisible.BACKGROUND_FILL);
-                  scene.add(blocks[i][j]);
+
               }
               else if (coins[i][j] == 2) {
-                  blocks[i][j] = new HStaticText("");
-                  
-                    //eigenschappen van object---------
-                  blocks[i][j].setLocation(10 + i*100,150 + j*100);
-                  blocks[i][j].setSize(100,100);
                   blocks[i][j].setBackground(new DVBColor(255,0,0,255));
-                  blocks[i][j].setBackgroundMode(HVisible.BACKGROUND_FILL);
-                  scene.add(blocks[i][j]);
               }
               scene.repaint();
           }
