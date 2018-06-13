@@ -12,11 +12,13 @@ public class HelloTVXlet implements Xlet, HActionListener {
     private XletContext actueleXletContext;
     private boolean debug=true;
             
-    private HStaticText tekstLabel;
+    private HStaticText tekstLabel, blueWinText, redWinText;
     private HTextButton knop1, knop2, knop3, knop4, knop5, knop6, knop7, newGame;
     int[][] coins = new int [7][4];
     HStaticText [][] blocks = new HStaticText [7][4];
     private int turn = 0;
+    private int win = 0;
+    private int rowNum, colNum;
     
     MijnComponent mc = new MijnComponent("veld.png", 10 , 150);
     
@@ -47,6 +49,18 @@ public class HelloTVXlet implements Xlet, HActionListener {
       tekstLabel.setSize(250,50);
       tekstLabel.setBackground(new DVBColor(0,127,255,179));
       tekstLabel.setBackgroundMode(HVisible.BACKGROUND_FILL);
+      
+      blueWinText = new HStaticText("Blauw wint!");
+      blueWinText.setLocation(510,10);
+      blueWinText.setSize(200,50);
+      blueWinText.setBackground(new DVBColor(0,127,255,255));
+      blueWinText.setBackgroundMode(HVisible.BACKGROUND_FILL);
+      
+      redWinText = new HStaticText("Rood wint!");
+      redWinText.setLocation(510,10);
+      redWinText.setSize(200,50);
+      redWinText.setBackground(new DVBColor(255,0,0,255));
+      redWinText.setBackgroundMode(HVisible.BACKGROUND_FILL);
       
       knop1 = new HTextButton("RIJ 1");
       knop1.setLocation(10, 75);
@@ -107,6 +121,8 @@ public class HelloTVXlet implements Xlet, HActionListener {
       
       
       scene.add(tekstLabel);
+      scene.add(blueWinText);
+      scene.add(redWinText);
       scene.add(knop1);
       scene.add(knop2);
       scene.add(knop3);
@@ -166,7 +182,8 @@ public class HelloTVXlet implements Xlet, HActionListener {
         else {
             System.out.println("rood is aan beurt");
         }
-        if (e.getActionCommand() == "rij 1 gekozen") {
+        if(win == 0) {
+            if (e.getActionCommand() == "rij 1 gekozen") {
             for (int i = 3; i > -1; i--) {
                 if (coins[0][i] == 0) {
                     if (turn % 2 == 0) {
@@ -176,6 +193,10 @@ public class HelloTVXlet implements Xlet, HActionListener {
                         coins[0][i] = 2;
                     }
                     turn++;
+                    
+                    rowNum = 0;
+                    colNum = i;
+                    
                     break;
                 }
             } 
@@ -190,6 +211,10 @@ public class HelloTVXlet implements Xlet, HActionListener {
                         coins[1][i] = 2;
                     }
                     turn++;
+                    
+                    rowNum = 1;
+                    colNum = i;
+                    
                     break;
                 }
             } 
@@ -204,6 +229,10 @@ public class HelloTVXlet implements Xlet, HActionListener {
                         coins[2][i] = 2;
                     }
                     turn++;
+                    
+                    rowNum = 2;
+                    colNum = i;
+                    
                     break;
                 }
             } 
@@ -218,6 +247,10 @@ public class HelloTVXlet implements Xlet, HActionListener {
                         coins[3][i] = 2;
                     }
                     turn++;
+                    
+                    rowNum = 3;
+                    colNum = i;
+                    
                     break;
                 }
             } 
@@ -232,6 +265,10 @@ public class HelloTVXlet implements Xlet, HActionListener {
                         coins[4][i] = 2;
                     }
                     turn++;
+                    
+                    rowNum = 4;
+                    colNum = i;
+                    
                     break;
                 }
             } 
@@ -246,6 +283,10 @@ public class HelloTVXlet implements Xlet, HActionListener {
                         coins[5][i] = 2;
                     }
                     turn++;
+                    
+                    rowNum = 5;
+                    colNum = i;
+                    
                     break;
                 }
             } 
@@ -260,19 +301,42 @@ public class HelloTVXlet implements Xlet, HActionListener {
                         coins[6][i] = 2;
                     }
                     turn++;
+                    
+                    rowNum = 6;
+                    colNum = i;
+                    
                     break;
                 }
             } 
         }
+        }
+        
         else if (e.getActionCommand() == "new game") {
             for(int i=0; i<7; i++) {
                 for(int j=0; j<4; j++) {
                     coins[i][j] = 0;
                     blocks[i][j].setBackground(new DVBColor(0,0,0,0));
                     turn = 0;
+                    win = 0;
                 }
             }
         }
+        
+        if ((turn - 1) % 2 == 0) {
+            if(checkWin(1)) {
+                win = 1;
+                System.out.println("blauw wint");
+            }
+        }
+        else {
+            if(checkWin(2)) {
+                win = 2;
+                System.out.println("rood wint");
+            }
+        }
+        
+        
+        
         paintScreen();
     }
     public void paintScreen () {
@@ -285,9 +349,69 @@ public class HelloTVXlet implements Xlet, HActionListener {
               else if (coins[i][j] == 2) {
                   blocks[i][j].setBackground(new DVBColor(255,0,0,255));
               }
-              scene.repaint();
           }
       }
+        if (win == 0) {
+            blueWinText.setVisible(false);
+            redWinText.setVisible(false);
+            System.out.println("paint no win");
+        }else if (win == 1) {
+            blueWinText.setVisible(true);
+            System.out.println("paint blauw win");
+        }else if (win == 2) {
+            redWinText.setVisible(true);
+            System.out.println("paint rood win");
+        }
+        
+        scene.repaint();
+    }
+    public boolean checkWin (int player) {
+        int count=0;
+
+    // Vertical check
+    for (int i=0;i<4;i++)
+    {
+        if (coins[rowNum][i] == player){
+            count++;
+        }  
+        else
+            count=0;
+
+        if (count>=4) {
+            return true;
+        } 
+    }
+    //Horizontal check
+    count=0;
+    for (int i=0;i<7;i++)
+    {
+        if (coins[i][colNum] == player) {
+            count++;
+        }
+        else
+            count=0;
+
+        if (count>=4) {
+            return true;
+        } 
+    } 
+    
+    // ascendingDiagonalCheck 
+    for (int i=3; i<7; i++){
+        for (int j=0; j<4-3; j++){
+            if (this.coins[i][j] == player && this.coins[i-1][j+1] == player && this.coins[i-2][j+2] == player && this.coins[i-3][j+3] == player)
+                return true;
+        }
+    }
+    // descendingDiagonalCheck
+    for (int i=3; i<7; i++){
+        for (int j=3; j<4; j++){
+            if (this.coins[i][j] == player && this.coins[i-1][j-1] == player && this.coins[i-2][j-2] == player && this.coins[i-3][j-3] == player)
+                return true;
+        }
+    }
+    
+        return false;
     }
     public void pauseXlet() {
      
